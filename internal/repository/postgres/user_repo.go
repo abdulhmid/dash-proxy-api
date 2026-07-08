@@ -8,9 +8,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	apperrors "github.com/teodosiopiera/api-source-proxy/pkg/errors"
+	apperrors "api-source-proxy/pkg/errors"
 
-	"github.com/teodosiopiera/api-source-proxy/internal/model"
+	"api-source-proxy/internal/model"
 )
 
 type UserRepo struct {

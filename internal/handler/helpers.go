@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	apperrors "github.com/teodosiopiera/api-source-proxy/pkg/errors"
-	"github.com/teodosiopiera/api-source-proxy/pkg/response"
+	apperrors "api-source-proxy/pkg/errors"
+	"api-source-proxy/pkg/response"
 )
 
 var validate = validator.New()

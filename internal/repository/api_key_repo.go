@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/teodosiopiera/api-source-proxy/internal/model"
+	"api-source-proxy/internal/model"
 )
 
 type ApiKeyRepository interface {

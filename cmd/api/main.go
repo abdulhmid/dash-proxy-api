@@ -14,12 +14,12 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
-	"github.com/teodosiopiera/api-source-proxy/internal/config"
-	"github.com/teodosiopiera/api-source-proxy/internal/handler"
-	"github.com/teodosiopiera/api-source-proxy/internal/repository/postgres"
-	mongorepo "github.com/teodosiopiera/api-source-proxy/internal/repository/mongo"
-	"github.com/teodosiopiera/api-source-proxy/internal/service"
-	"github.com/teodosiopiera/api-source-proxy/pkg/database"
+	"api-source-proxy/internal/config"
+	"api-source-proxy/internal/handler"
+	"api-source-proxy/internal/repository/postgres"
+	mongorepo "api-source-proxy/internal/repository/mongo"
+	"api-source-proxy/internal/service"
+	"api-source-proxy/pkg/database"
 )
 
 func main() {

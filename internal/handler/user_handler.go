@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/teodosiopiera/api-source-proxy/internal/dto"
-	"github.com/teodosiopiera/api-source-proxy/internal/service"
-	"github.com/teodosiopiera/api-source-proxy/pkg/response"
+	"api-source-proxy/internal/dto"
+	"api-source-proxy/internal/service"
+	"api-source-proxy/pkg/response"
 )
 
 type UserHandler struct {

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/teodosiopiera/api-source-proxy/internal/dto"
-	"github.com/teodosiopiera/api-source-proxy/internal/model"
-	"github.com/teodosiopiera/api-source-proxy/internal/repository"
-	"github.com/teodosiopiera/api-source-proxy/pkg/auth"
-	apperrors "github.com/teodosiopiera/api-source-proxy/pkg/errors"
+	"api-source-proxy/internal/dto"
+	"api-source-proxy/internal/model"
+	"api-source-proxy/internal/repository"
+	"api-source-proxy/pkg/auth"
+	apperrors "api-source-proxy/pkg/errors"
 )
 
 type AuthService struct {

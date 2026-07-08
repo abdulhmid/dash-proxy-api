@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/teodosiopiera/api-source-proxy/internal/model"
-	apperrors "github.com/teodosiopiera/api-source-proxy/pkg/errors"
+	"api-source-proxy/internal/model"
+	apperrors "api-source-proxy/pkg/errors"
 )
 
 type ApiSourceRepo struct {

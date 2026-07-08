@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/teodosiopiera/api-source-proxy/internal/model"
-	"github.com/teodosiopiera/api-source-proxy/internal/repository"
-	apperrors "github.com/teodosiopiera/api-source-proxy/pkg/errors"
+	"api-source-proxy/internal/model"
+	"api-source-proxy/internal/repository"
+	apperrors "api-source-proxy/pkg/errors"
 )
 
 type ProxyService struct {

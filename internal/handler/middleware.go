@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/teodosiopiera/api-source-proxy/internal/model"
-	"github.com/teodosiopiera/api-source-proxy/internal/service"
-	"github.com/teodosiopiera/api-source-proxy/pkg/auth"
-	"github.com/teodosiopiera/api-source-proxy/pkg/response"
+	"api-source-proxy/internal/model"
+	"api-source-proxy/internal/service"
+	"api-source-proxy/pkg/auth"
+	"api-source-proxy/pkg/response"
 )
 
 type contextKey string

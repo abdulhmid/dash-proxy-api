@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/teodosiopiera/api-source-proxy/internal/service"
-	"github.com/teodosiopiera/api-source-proxy/pkg/response"
+	"api-source-proxy/internal/service"
+	"api-source-proxy/pkg/response"
 )
 
 type LogHandler struct {
