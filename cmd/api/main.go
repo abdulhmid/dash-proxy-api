@@ -23,7 +23,8 @@ import (
 )
 
 func main() {
-	cfg := config.Load()
+	// cfg := config.Load()
+	cfg := os.Getenv("DATABASE_URL")
 
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
 
