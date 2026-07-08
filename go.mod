@@ -1,4 +1,4 @@
-module api-source-proxy
+module api-proxy-gateway
 
 go 1.25
 
