@@ -1,4 +1,4 @@
-module github.com/abdulhmid/dash-proxy-api.git
+module dash-proxy-api
 
 go 1.25
 
