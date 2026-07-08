@@ -1,4 +1,4 @@
-module github.com/teodosiopiera/api-source-proxy
+module api-source-proxy
 
 go 1.25
 
