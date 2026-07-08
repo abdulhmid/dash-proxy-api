@@ -1,0 +1,24 @@
+server:
+  port: 8080
+  proxy: ""  # e.g. http://proxy.company.com:8080
+
+database:
+  postgres:
+    host: localhost
+    port: "5432"
+    user: postgres
+    password: postgres
+    dbname: api_source_proxy
+    sslmode: disable
+  mongo:
+    uri: mongodb://localhost:27017
+    dbname: api_source_proxy
+
+jwt:
+  secret: change-me-to-a-random-secret
+  expiry_hour: 24
+
+admin:
+  username: admin
+  password: admin123
+  email: admin@example.com

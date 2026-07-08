@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Source Proxy - Admin Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f172a;color:#e2e8f0;font-size:14px}
+.nav{background:#1e293b;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #334155;position:sticky;top:0;z-index:100}
+.nav h1{font-size:1.25rem;font-weight:600;color:#38bdf8}
+.nav button{background:#ef4444;color:#fff;border:none;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;font-size:0.875rem}
+.nav button:hover{background:#dc2626}
+.container{max-width:1400px;margin:0 auto;padding:1.5rem 2rem}
+.tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid #334155}
+.tab{padding:0.75rem 1.5rem;cursor:pointer;font-weight:500;color:#94a3b8;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab:hover{color:#e2e8f0}
+.tab.active{color:#38bdf8;border-bottom-color:#38bdf8}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#1e293b;padding:1.25rem;border-radius:8px;border:1px solid #334155}
+.stat-card .label{font-size:0.75rem;text-transform:uppercase;color:#94a3b8;margin-bottom:0.25rem}
+.stat-card .value{font-size:1.5rem;font-weight:700;color:#38bdf8}
+.filters{display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;align-items:end}
+.filters input,.filters select{background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.875rem}
+.filters input:focus,.filters select:focus{outline:none;border-color:#38bdf8}
+.btn{background:#38bdf8;color:#0f172a;border:none;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.875rem;transition:background .15s}
+.btn:hover{background:#0ea5e9}
+.btn-sm{padding:0.3rem 0.6rem;font-size:0.75rem}
+.btn-danger{background:#ef4444;color:#fff}
+.btn-danger:hover{background:#dc2626}
+.btn-outline{background:transparent;border:1px solid #334155;color:#94a3b8}
+.btn-outline:hover{border-color:#38bdf8;color:#38bdf8}
+table{width:100%;border-collapse:collapse;background:#1e293b;border-radius:8px;overflow:hidden;border:1px solid #334155}
+th{text-align:left;padding:0.75rem 1rem;background:#334155;color:#94a3b8;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em}
+td{padding:0.75rem 1rem;border-top:1px solid #1e293b;font-size:0.875rem;vertical-align:middle}
+tr:hover td{background:rgba(56,189,248,0.05)}
+.badge{display:inline-block;padding:0.125rem 0.5rem;border-radius:9999px;font-size:0.75rem;font-weight:500}
+.badge-success{background:rgba(34,197,94,0.2);color:#22c55e}
+.badge-error{background:rgba(239,68,68,0.2);color:#ef4444}
+.badge-warning{background:rgba(250,204,21,0.2);color:#eab308}
+.badge-info{background:rgba(56,189,248,0.2);color:#38bdf8}
+.pagination{display:flex;justify-content:center;gap:0.5rem;margin-top:1rem}
+.pagination button{background:#334155;color:#e2e8f0;border:none;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.875rem}
+.pagination button:hover:not(:disabled){background:#475569}
+.pagination button:disabled{opacity:0.4;cursor:not-allowed}
+.loading{text-align:center;padding:3rem;color:#94a3b8}
+.login-container{max-width:400px;margin:100px auto;padding:2rem;background:#1e293b;border-radius:12px;border:1px solid #334155}
+.login-container h2{margin-bottom:1.5rem;text-align:center}
+.login-container input{width:100%;padding:0.75rem;margin-bottom:1rem;background:#0f172a;border:1px solid #334155;color:#e2e8f0;border-radius:6px}
+.login-container input:focus{outline:none;border-color:#38bdf8}
+.login-container button{width:100%;padding:0.75rem;background:#38bdf8;color:#0f172a;border:none;border-radius:6px;font-weight:600;cursor:pointer}
+.login-container button:hover{background:#0ea5e9}
+.login-error{color:#ef4444;text-align:center;margin-top:0.5rem;font-size:0.875rem}
+.hidden{display:none!important}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:flex;align-items:center;justify-content:center}
+.modal{background:#1e293b;border-radius:12px;border:1px solid #334155;padding:2rem;width:560px;max-height:90vh;overflow-y:auto}
+.modal h3{margin-bottom:1.5rem;font-size:1.1rem;color:#38bdf8}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;margin-bottom:0.35rem;font-size:0.875rem;color:#94a3b8}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:0.6rem 0.75rem;background:#0f172a;border:1px solid #334155;color:#e2e8f0;border-radius:6px;font-size:0.875rem;font-family:inherit}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:#38bdf8}
+.form-group textarea{min-height:60px;resize:vertical}
+.form-group .hint{font-size:0.75rem;color:#64748b;margin-top:0.25rem}
+.form-group .required{color:#ef4444;margin-left:2px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.modal-actions{display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #334155}
+pre{background:#0f172a;padding:0.75rem;border-radius:6px;overflow-x:auto;font-size:0.8rem;margin:0.5rem 0}
+code{font-family:'SF Mono',Menlo,monospace}
+.endpoint{margin-bottom:1.5rem;padding:1rem;background:#1e293b;border-radius:8px;border:1px solid #334155}
+.endpoint .method{display:inline-block;padding:0.2rem 0.5rem;border-radius:4px;font-weight:700;font-size:0.75rem;margin-right:0.5rem}
+.method-get{background:rgba(34,197,94,0.2);color:#22c55e}
+.method-post{background:rgba(56,189,248,0.2);color:#38bdf8}
+.method-put{background:rgba(250,204,21,0.2);color:#eab308}
+.method-delete{background:rgba(239,68,68,0.2);color:#ef4444}
+.endpoint .path{font-family:'SF Mono',Menlo,monospace;font-size:0.9rem}
+.endpoint .desc{color:#94a3b8;margin-top:0.35rem;font-size:0.85rem}
+</style>
+</head>
+<body>
+<div id="loginView" class="login-container">
+  <h2>Login</h2>
+  <input type="text" id="loginUser" placeholder="Username" autocomplete="username">
+  <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+  <button onclick="login()">Login</button>
+  <div id="loginError" class="login-error"></div>
+</div>
+
+<div id="dashboardView" class="hidden">
+  <nav class="nav">
+    <h1>API Source Proxy</h1>
+    <div><span id="userDisplay" style="margin-right:1rem;color:#94a3b8"></span><button onclick="logout()">Logout</button></div>
+  </nav>
+  <div class="container">
+    <div class="tabs" id="tabBar">
+      <div class="tab active" onclick="switchTab('test')">Direct Proxy Test</div>
+      <div class="tab" onclick="switchTab('logs')">Activity Logs</div>
+      <div class="tab admin-only" onclick="switchTab('sources')">API Sources</div>
+      <div class="tab admin-only" onclick="switchTab('users')">Users & Keys</div>
+      <div class="tab admin-only" onclick="switchTab('docs')">API Docs</div>
+    </div>
+
+    <div id="tab-test" class="tab-content active">
+      <div style="max-width:800px;margin:0 auto">
+        <div class="form-group">
+          <label>API Source <span class="required">*</span></label>
+          <select id="testSource" onchange="onTestSourceChange()"><option value="">Select source...</option></select>
+        </div>
+        <input type="hidden" id="testMethod">
+        <div id="testParamsContainer"></div>
+        <button class="btn" onclick="sendProxyTest()" id="testSendBtn">Send Request</button>
+        <div id="testResult" style="margin-top:1.5rem"></div>
+      </div>
+    </div>
+
+    <div id="tab-logs" class="tab-content">
+      <div class="stats" id="stats"></div>
+      <div class="filters">
+        <input type="text" id="filterUser" placeholder="User ID" class="admin-only">
+        <select id="filterSource"><option value="">All Sources</option></select>
+        <input type="date" id="filterStart">
+        <input type="date" id="filterEnd">
+        <button class="btn" onclick="loadLogs(1)">Search</button>
+      </div>
+      <div id="tableContainer"><div class="loading">Loading logs...</div></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <div id="tab-sources" class="tab-content">
+      <div class="toolbar">
+        <span style="color:#94a3b8;font-size:0.9rem">Registered API Sources</span>
+        <button class="btn" onclick="openSourceModal()">+ Add Source</button>
+      </div>
+      <div id="sourcesTableContainer"><div class="loading">Loading sources...</div></div>
+    </div>
+
+    <div id="tab-users" class="tab-content">
+      <div class="toolbar">
+        <span style="color:#94a3b8;font-size:0.9rem">Registered Users</span>
+        <button class="btn" onclick="openUserModal()">+ Add User</button>
+      </div>
+      <div id="usersTableContainer" style="margin-bottom:2rem"><div class="loading">Loading users...</div></div>
+
+      <div class="toolbar" style="margin-top:1.5rem">
+        <span style="color:#94a3b8;font-size:0.9rem">API Keys</span>
+        <button class="btn" onclick="openKeyModal()">+ Generate Key</button>
+      </div>
+      <div id="keysTableContainer"><div class="loading">Loading keys...</div></div>
+    </div>
+
+    <div id="tab-docs" class="tab-content">
+      <h2 style="margin-bottom:1rem;font-size:1.2rem;color:#e2e8f0">API Documentation</h2>
+      <p style="color:#94a3b8;margin-bottom:1.5rem">Base URL: <code style="color:#38bdf8">http://localhost:8080/api/v1</code></p>
+
+      <h3 style="color:#38bdf8;margin-bottom:1rem">Admin Endpoints</h3>
+
+      <div class="endpoint">
+        <span class="method method-post">POST</span><span class="path">/auth/login</span>
+        <div class="desc">Login dengan username & password admin → return JWT token</div>
+        <pre>curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"admin123"}'</pre>
+      </div>
+
+      <div class="endpoint">
+        <span class="method method-get">GET</span><span class="path">/users</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Daftar semua users</div>
+      </div>
+
+      <div class="endpoint">
+        <span class="method method-post">POST</span><span class="path">/users</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Buat user baru</div>
+        <pre>curl -X POST http://localhost:8080/api/v1/users \
+  -H "Authorization: Bearer &lt;token&gt;" \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"team-xxx","email":"team@x.com","password":"pass123"}'</pre>
+      </div>
+
+      <div class="endpoint">
+        <span class="method method-post">POST</span><span class="path">/api-keys</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Buat API key untuk user (key hanya muncul sekali)</div>
+        <pre>curl -X POST http://localhost:8080/api/v1/api-keys \
+  -H "Authorization: Bearer &lt;token&gt;" \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"&lt;user-id&gt;","name":"My Key"}'</pre>
+      </div>
+
+      <div class="endpoint">
+        <span class="method method-delete">DELETE</span><span class="path">/api-keys/{id}</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Nonaktifkan API key</div>
+      </div>
+
+      <h3 style="color:#38bdf8;margin:1.5rem 0 1rem">API Source Management</h3>
+
+      <div class="endpoint">
+        <span class="method method-get">GET</span><span class="path">/api-sources</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Daftar semua sumber data API</div>
+      </div>
+
+      <div class="endpoint">
+        <span class="method method-post">POST</span><span class="path">/api-sources</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Daftarkan sumber data baru (wajib: url)</div>
+        <pre>curl -X POST http://localhost:8080/api/v1/api-sources \
+  -H "Authorization: Bearer &lt;token&gt;" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "base_url": "https://api.example.com/getLocation",
+    "name": "my-api",
+    "username": "api-user",
+    "auth_headers": "{\"Authorization\":\"Bearer xxx\"}",
+    "extra_params": "{\"param1\":\"value1\"}",
+    "timeout_ms": 15000
+  }'</pre>
+      </div>
+
+      <div class="endpoint">
+        <span class="method method-put">PUT</span><span class="path">/api-sources/{id}</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Edit sumber data (field optional, hanya yg dikirim yg diubah)</div>
+      </div>
+
+      <div class="endpoint">
+        <span class="method method-delete">DELETE</span><span class="path">/api-sources/{id}</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Hapus sumber data</div>
+      </div>
+
+      <h3 style="color:#38bdf8;margin:1.5rem 0 1rem">Proxy Endpoints</h3>
+
+      <div class="endpoint">
+        <span class="method method-post">POST</span><span class="path">/proxy/{source}/getLocation</span>
+        <span class="badge badge-warning" style="margin-left:0.5rem">X-API-Key</span>
+        <div class="desc">Proxy ke sumber data. Parameter dikirim sebagai form-urlencoded</div>
+        <pre>curl -X POST http://localhost:8080/api/v1/proxy/cp-cobra/getLocation \
+  -H "X-API-Key: ask-xxxx..." \
+  -d "msisdn=6281234567890"</pre>
+      </div>
+
+      <h3 style="color:#38bdf8;margin:1.5rem 0 1rem">Monitoring</h3>
+
+      <div class="endpoint">
+        <span class="method method-get">GET</span><span class="path">/activity-logs</span>
+        <span class="badge badge-info" style="margin-left:0.5rem">Admin</span>
+        <div class="desc">Lihat log aktivitas (support filter: user_id, api_source_name, start_date, end_date, page, limit)</div>
+      </div>
+
+      <div class="endpoint">
+        <span class="method method-get">GET</span><span class="path">/health</span>
+        <div class="desc">Health check</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Source Modal -->
+<div id="sourceModal" class="modal-overlay hidden" onclick="if(event.target===this)closeSourceModal()">
+  <div class="modal" onclick="event.stopPropagation()" style="width:680px">
+    <h3 id="sourceModalTitle">Add API Source</h3>
+    <input type="hidden" id="sourceId">
+    <div class="form-group">
+      <label>Base URL <span class="required">*</span></label>
+      <input type="url" id="srcUrl" placeholder="https://api.example.com/getLocation" oninput="autoGenerateName()">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="srcName" placeholder="Auto-generated if empty">
+        <div class="hint">Auto-generated dari URL jika dikosongkan</div>
+      </div>
+      <div class="form-group">
+        <label>Method</label>
+        <select id="srcMethod">
+          <option value="GET">GET</option>
+          <option value="POST" selected>POST</option>
+          <option value="PUT">PUT</option>
+          <option value="DELETE">DELETE</option>
+          <option value="PATCH">PATCH</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="srcUsername" placeholder="Static username param">
+    </div>
+    <div class="form-group">
+      <label>Auth Type</label>
+      <select id="srcAuthType" onchange="toggleAuthFields()">
+        <option value="custom">Custom Headers</option>
+        <option value="none">None</option>
+        <option value="basic">Basic Auth</option>
+        <option value="bearer">Bearer Token</option>
+        <option value="api-key">API Key</option>
+      </select>
+    </div>
+    <div id="authFieldsCustom" class="form-group">
+      <label>Custom Headers (JSON)</label>
+      <textarea id="srcAuth" placeholder='{"Authorization":"Bearer xxx"}'></textarea>
+      <div class="hint">JSON object of header key-value pairs</div>
+    </div>
+    <div id="authFieldsBasic" class="form-row hidden">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="authBasicUser" placeholder="Basic auth username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="authBasicPass" placeholder="Basic auth password">
+      </div>
+    </div>
+    <div id="authFieldsBearer" class="form-group hidden">
+      <label>Bearer Token</label>
+      <input type="text" id="authBearerToken" placeholder="eyJhbGciOiJI...">
+    </div>
+    <div id="authFieldsApiKey" class="form-row hidden">
+      <div class="form-group">
+        <label>Key Name</label>
+        <input type="text" id="authApiKeyName" placeholder="X-API-Key">
+      </div>
+      <div class="form-group">
+        <label>Key Value</label>
+        <input type="text" id="authApiKeyValue" placeholder="your-api-key">
+      </div>
+      <div class="form-group">
+        <label>Location</label>
+        <select id="authApiKeyIn">
+          <option value="header">Header</option>
+          <option value="query">Query Param</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Accepted Fields (JSON)</label>
+        <textarea id="srcAcceptedFields" placeholder='{"msisdn":"required","type":"optional"}'></textarea>
+        <div class="hint">Field yg diterima API ini. Akan tampil sebagai input di Direct Proxy Test</div>
+      </div>
+      <div class="form-group">
+        <label>Extra Params (JSON)</label>
+        <textarea id="srcParams" placeholder='{"key":"value"}'></textarea>
+        <div class="hint">Parameter form tambahan selain msisdn/username/requestId</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Timeout (ms)</label>
+        <input type="number" id="srcTimeout" placeholder="30000" value="30000">
+      </div>
+      <div class="form-group">
+        <label>Active</label>
+        <select id="srcActive">
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeSourceModal()">Cancel</button>
+      <button class="btn" id="saveSourceBtn" onclick="saveSource()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- User Modal -->
+<div id="userModal" class="modal-overlay hidden" onclick="if(event.target===this)closeUserModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="userModalTitle">Add User</h3>
+    <input type="hidden" id="userId">
+    <div class="form-group">
+      <label>Username <span class="required">*</span></label>
+      <input type="text" id="userUsername" placeholder="team-xxx">
+    </div>
+    <div class="form-group">
+      <label>Email <span class="required">*</span></label>
+      <input type="email" id="userEmail" placeholder="team@company.com">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="userPassword" placeholder="Kosongkan jika tidak ingin ganti">
+      <div class="hint">Kosongkan jika tidak ingin mengubah password</div>
+    </div>
+    <div class="form-group">
+      <label>Role</label>
+      <select id="userRole"><option value="user">User</option><option value="admin">Admin</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeUserModal()">Cancel</button>
+      <button class="btn" onclick="saveUser()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- API Key Modal -->
+<div id="keyModal" class="modal-overlay hidden" onclick="if(event.target===this)closeKeyModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>Generate API Key</h3>
+    <div class="form-group">
+      <label>User <span class="required">*</span></label>
+      <select id="keyUser"><option value="">Select user...</option></select>
+    </div>
+    <div class="form-group">
+      <label>Key Name <span class="required">*</span></label>
+      <input type="text" id="keyName" placeholder="e.g. Team A Integration">
+    </div>
+    <div class="form-group">
+      <label>Expiry (days)</label>
+      <input type="number" id="keyExpiry" placeholder="Leave empty = no expiry">
+      <div class="hint">Kosongkan jika tidak ada masa berlaku</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeKeyModal()">Cancel</button>
+      <button class="btn" onclick="saveKey()">Generate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Key Result Modal -->
+<div id="keyResultModal" class="modal-overlay hidden" onclick="if(event.target===this)closeKeyResultModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>API Key Generated</h3>
+    <p style="color:#fbbf24;font-size:0.9rem;margin-bottom:1rem">⚠️ Simpan key ini! Tidak akan muncul lagi.</p>
+    <div class="form-group">
+      <label>API Key</label>
+      <textarea id="keyResultValue" readonly style="background:#0f172a;color:#38bdf8;font-family:monospace;font-size:0.8rem;padding:0.75rem;min-height:40px"></textarea>
+    </div>
+    <button class="btn" style="width:100%" onclick="copyKeyResult()">📋 Copy Key</button>
+    <div class="modal-actions" style="border:none;margin-top:1rem;padding:0">
+      <button class="btn btn-outline" onclick="closeKeyResultModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<div id="responseModal" class="modal-overlay hidden" onclick="if(event.target===this)closeResponseModal()">
+  <div class="modal" onclick="event.stopPropagation()" style="width:700px">
+    <h3>Full Response</h3>
+    <pre id="responseBody" style="background:#0f172a;color:#e2e8f0;padding:1rem;border-radius:8px;font-size:0.8rem;max-height:70vh;overflow-y:auto;white-space:pre-wrap;word-break:break-all;margin:0"></pre>
+    <div class="modal-actions" style="border:none;margin-top:1rem;padding:0">
+      <button class="btn btn-outline" onclick="closeResponseModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '/api/v1';
+let token = localStorage.getItem('token');
+let currentPage = 1;
+let userRole = 'admin';
+let userId = '';
+
+function parseToken(t){
+  try{const p=JSON.parse(atob(t.split('.')[1]));userRole=p.role||'admin';userId=p.user_id||'';return p}catch(e){return{}}
+}
+if(token){parseToken(token);showDashboard()}
+
+function login() {
+  fetch(API+'/auth/login', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({username:document.getElementById('loginUser').value,password:document.getElementById('loginPass').value})
+  }).then(r=>r.json()).then(d=>{
+    if(d.status==='success'){token=d.data.token;localStorage.setItem('token',token);parseToken(token);showDashboard()}
+    else document.getElementById('loginError').textContent=d.message||'Login failed'
+  }).catch(()=>document.getElementById('loginError').textContent='Connection error')
+}
+
+function logout(){token=null;localStorage.removeItem('token');document.getElementById('dashboardView').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden')}
+
+function showDashboard(){
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('dashboardView').classList.remove('hidden');
+  document.getElementById('userDisplay').textContent=userId.slice(0,8)+'...';
+  document.querySelectorAll('.admin-only').forEach(e=>e.classList.toggle('hidden',userRole!=='admin'));
+  switchTab('test')
+}
+
+function authHeaders(){return{'Authorization':'Bearer '+token,'Content-Type':'application/json'}}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  const idx={test:1,logs:2,sources:3,users:4,docs:5}[name]||1;
+  document.querySelector(`.tab:nth-child(${idx})`).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='logs') loadLogs(currentPage);
+  if(name==='sources') loadSources();
+  if(name==='users'){loadUsers();loadKeys()};
+  if(name==='test') loadTestSources()
+}
+
+function viewParams(idx){
+  let raw=logsData[idx]?.request_body||'';
+  let body=raw;
+  try{body=JSON.stringify(JSON.parse(raw),null,2)}catch(e){}
+  document.getElementById('responseBody').textContent=body||'No request params';
+  document.getElementById('responseModal').classList.remove('hidden')
+}
+function viewResponse(idx){
+  let body=logsData[idx]?.response_body||'No response body';
+  try{body=JSON.stringify(JSON.parse(body),null,2)}catch(e){}
+  document.getElementById('responseBody').textContent=body;
+  document.getElementById('responseModal').classList.remove('hidden')
+}
+function closeResponseModal(){document.getElementById('responseModal').classList.add('hidden')}
+
+/* ====== Activity Logs ====== */
+let logsData = [];
+function loadLogs(page){
+  currentPage=page;
+  const p=new URLSearchParams({page,limit:20});
+  const uid=document.getElementById('filterUser').value, src=document.getElementById('filterSource').value;
+  const sd=document.getElementById('filterStart').value, ed=document.getElementById('filterEnd').value;
+  if(uid&&userRole==='admin')p.set('user_id',uid);if(src)p.set('api_source_name',src);if(sd)p.set('start_date',sd);if(ed)p.set('end_date',ed);
+  document.getElementById('tableContainer').innerHTML='<div class="loading">Loading logs...</div>';
+  const ctrl=new AbortController();
+  setTimeout(()=>ctrl.abort(),15000);
+  const endpoint=userRole==='admin'?API+'/activity-logs':API+'/user/activity-logs';
+  fetch(endpoint+'?'+p,{headers:authHeaders(),signal:ctrl.signal}).then(r=>{
+    if(!r.ok&&r.status===401){logout();return}
+    return r.json()
+  }).then(d=>{
+    if(!d||d.status==='error'){document.getElementById('tableContainer').innerHTML=`<div class="loading">${d?.message||'Failed to load logs'}</div>`;return}
+    renderLogs(d.data||[],d.meta||{page,limit:20,total:0});
+    document.getElementById('stats').innerHTML=`
+      <div class="stat-card"><div class="label">Total Requests</div><div class="value">${d.meta?.total||0}</div></div>
+      <div class="stat-card"><div class="label">Page</div><div class="value">${d.meta?.page||1}</div></div>
+      <div class="stat-card"><div class="label">Per Page</div><div class="value">${d.meta?.limit||20}</div></div>`;
+    renderPagination(d.meta)
+  }).catch(e=>{
+    if(e.name==='AbortError')document.getElementById('tableContainer').innerHTML='<div class="loading">Request timed out. Check your connection.</div>';
+    else document.getElementById('tableContainer').innerHTML='<div class="loading">Error loading data</div>'
+  });
+  loadSourceFilter()
+}
+
+function loadSourceFilter(){
+  const ep=userRole==='admin'?API+'/api-sources':API+'/user/api-sources';
+  fetch(ep,{headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    if(!d.data)return;const sel=document.getElementById('filterSource');sel.innerHTML='<option value="">All Sources</option>';
+    d.data.forEach(s=>{sel.innerHTML+=`<option value="${s.name}">${s.name}</option>`})
+  }).catch(()=>{})
+}
+
+function loadTestSources(){
+  const ep=userRole==='admin'?API+'/api-sources':API+'/user/api-sources';
+  fetch(ep,{headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    const sel=document.getElementById('testSource');
+    if(!d.data||!d.data.length){sel.innerHTML='<option value="">No sources available</option>';return}
+    testSources=d.data;
+    sel.innerHTML='<option value="">Select source...</option>';
+    testSources.forEach(s=>{sel.innerHTML+=`<option value="${s.name}">${s.name}</option>`})
+  }).catch(()=>{})
+}
+
+let testParamsCache={};
+let testResponseCache={};
+
+function onTestSourceChange(){
+  const name=document.getElementById('testSource').value;
+  const methodInput=document.getElementById('testMethod');
+  const src=testSources.find(s=>s.name===name);
+  methodInput.value=src&&src.method?src.method:'POST';
+
+  // Save current field values + response to cache before switching
+  const prevName=document.querySelector('#testParamsContainer .test-field')?.dataset.prevSource;
+  if(prevName){
+    const cache={};
+    document.querySelectorAll('.test-field').forEach(el=>{cache[el.dataset.field]=el.value});
+    testParamsCache[prevName]=cache;
+    const resp=document.getElementById('testResult').innerHTML;
+    if(resp)testResponseCache[prevName]=resp;
+  }
+
+  renderTestFields(src);
+  document.getElementById('testResult').innerHTML=testResponseCache[name]||'';
+
+  // Restore cached field values
+  if(name&&testParamsCache[name]){
+    const cache=testParamsCache[name];
+    Object.entries(cache).forEach(([field,val])=>{
+      const el=document.getElementById('testField_'+field);
+      if(el)el.value=val;
+    });
+  }
+}
+
+function renderTestFields(src){
+  const container=document.getElementById('testParamsContainer');
+  let fields={msisdn:'required'};
+  if(src&&src.accepted_fields){
+    try{fields=JSON.parse(src.accepted_fields)}catch(e){}
+  }
+  const method=src.method||'POST';
+  const isGetLike=method==='GET'||method==='DELETE';
+  let html='';
+  Object.entries(fields).forEach(([name,rule])=>{
+    const label=name.charAt(0).toUpperCase()+name.slice(1).replace(/_/g,' ');
+    const required=rule==='required';
+    html+=`<div class="form-group">
+      <label>${label}${required?' <span class="required">*</span>':''}</label>
+      <input type="text" id="testField_${name}" class="test-field" data-field="${name}" data-prev-source="${src?.name||''}" placeholder="Enter ${name}"${required?' required':''} style="width:100%;padding:0.6rem 0.75rem;background:#1e293b;border:1px solid #334155;border-radius:6px;color:#e2e8f0;font-size:0.85rem">
+    </div>`;
+  });
+  html+=`<div class="hint">${isGetLike?'URL query parameters':'Body parameters'} (method: ${method})</div>`;
+  container.innerHTML=html;
+}
+
+function sendProxyTest(){
+  const source=document.getElementById('testSource').value;
+  const method=document.getElementById('testMethod').value;
+  const isGetLike=method==='GET'||method==='DELETE';
+  if(!source){alert('Please select an API source');return}
+
+  // Collect field values from dynamic inputs
+  const fields=document.querySelectorAll('.test-field');
+  const params={};
+  let missingRequired=false;
+  const src=testSources.find(s=>s.name===source);
+  let acceptedFields={};
+  if(src&&src.accepted_fields){try{acceptedFields=JSON.parse(src.accepted_fields)}catch(e){}}
+  fields.forEach(el=>{
+    const name=el.dataset.field;
+    const val=el.value.trim();
+    if(!val&&acceptedFields[name]==='required')missingRequired=true;
+    if(val)params[name]=val;
+  });
+  if(!Object.keys(params).length){alert('Please fill in at least one parameter');return}
+  if(missingRequired){alert('Please fill in all required fields');return}
+
+  const btn=document.getElementById('testSendBtn');
+  btn.disabled=true;btn.textContent='Sending...';
+  document.getElementById('testResult').innerHTML='<div class="loading">Sending request...</div>';
+
+  const body={method,params};
+
+  function showTestResult(html){
+    document.getElementById('testResult').innerHTML=html;
+    const curSource=document.getElementById('testSource').value;
+    if(curSource)testResponseCache[curSource]=html;
+  }
+
+  fetch(API+'/user/proxy-test/'+encodeURIComponent(source),{
+    method:'POST',headers:authHeaders(),body:JSON.stringify(body)
+  }).then(r=>r.json()).then(d=>{
+    btn.disabled=false;btn.textContent='Send Request';
+    const data=d.data||{};
+    if(data.success){
+      showTestResult(`
+        <div style="background:#1e293b;border:1px solid #22c55e;border-radius:8px;padding:1rem">
+          <div style="color:#22c55e;font-weight:600;margin-bottom:0.75rem">✓ Success</div>
+          <pre style="background:#0f172a;padding:0.75rem;border-radius:6px;overflow-x:auto;font-size:0.8rem;max-height:500px;overflow-y:auto;white-space:pre-wrap;word-break:break-all">${escapeHtml(JSON.stringify(data.result,null,2))}</pre>
+        </div>`)
+    } else {
+      showTestResult(`
+        <div style="background:#1e293b;border:1px solid #ef4444;border-radius:8px;padding:1rem">
+          <div style="color:#ef4444;font-weight:600;margin-bottom:0.75rem">✗ Error</div>
+          <pre style="background:#0f172a;padding:0.75rem;border-radius:6px;overflow-x:auto;font-size:0.8rem;color:#ef4444;white-space:pre-wrap;word-break:break-all">${escapeHtml(data.error||'Unknown error')}</pre>
+        </div>`)
+    }
+  }).catch(()=>{
+    btn.disabled=false;btn.textContent='Send Request';
+    showTestResult('<div class="loading">Connection error</div>')
+  })
+}
+
+function escapeHtml(s){
+  const d=document.createElement('div');d.textContent=s;return d.innerHTML
+}
+
+function renderLogs(logs){
+  logsData = logs;
+  if(!logs.length){document.getElementById('tableContainer').innerHTML='<div class="loading">No logs found</div>';return}
+  let html=`<table><thead><tr><th>Time</th><th>User</th><th>Client</th><th>Source</th><th>Params</th><th>Status</th><th>Dur</th><th>IP</th><th>Response</th></tr></thead><tbody>`;
+  logs.forEach((l,i)=>{
+    const time=new Date(l.created_at).toLocaleString(), st=l.response_code>=200&&l.response_code<300?'success':'error';
+    html+=`<tr><td style="white-space:nowrap">${time}</td><td>${l.username||'-'}</td><td>${l.client||'-'}</td><td>${l.api_source_name||'-'}</td>
+      <td><button class="btn btn-sm btn-outline" onclick="viewParams(${i})">View</button></td>
+      <td><span class="badge badge-${st}">${l.response_code}</span></td>
+      <td>${l.duration_ms}ms</td><td>${l.client_ip||'-'}</td>
+      <td><button class="btn btn-sm btn-outline" onclick="viewResponse(${i})">View</button></td></tr>`
+  });
+  html+='</tbody></table>';document.getElementById('tableContainer').innerHTML=html
+}
+
+function renderPagination(meta){
+  if(!meta)return;const totalPages=Math.ceil((meta.total||0)/(meta.limit||20));
+  if(totalPages<=1){document.getElementById('pagination').innerHTML='';return}
+  let h=`<button ${currentPage<=1?'disabled':''} onclick="loadLogs(1)">First</button>
+    <button ${currentPage<=1?'disabled':''} onclick="loadLogs(${currentPage-1})">Prev</button>
+    <span style="padding:0.5rem 0.8rem;color:#94a3b8">${currentPage} / ${totalPages}</span>
+    <button ${currentPage>=totalPages?'disabled':''} onclick="loadLogs(${currentPage+1})">Next</button>
+    <button ${currentPage>=totalPages?'disabled':''} onclick="loadLogs(${totalPages})">Last</button>`;
+  document.getElementById('pagination').innerHTML=h
+}
+
+/* ====== Users ====== */
+function loadUsers(){
+  document.getElementById('usersTableContainer').innerHTML='<div class="loading">Loading users...</div>';
+  fetch(API+'/users',{headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    if(d.status==='error'){document.getElementById('usersTableContainer').innerHTML=`<div class="loading">${d.message}</div>`;return}
+    renderUsers(d.data||[])
+  }).catch(()=>document.getElementById('usersTableContainer').innerHTML='<div class="loading">Error loading users</div>')
+}
+
+function renderUsers(users){
+  if(!users.length){document.getElementById('usersTableContainer').innerHTML='<div class="loading">No users found</div>';return}
+  let html=`<table><thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>`;
+  users.forEach(u=>{
+    const active=u.is_active?'success':'error', activeText=u.is_active?'Active':'Inactive';
+    const created=new Date(u.created_at).toLocaleDateString();
+    html+=`<tr>
+      <td><strong>${u.username}</strong>${u.username==='admin'?' <span class="badge badge-info" style="font-size:0.65rem">you</span>':''}</td>
+      <td>${u.email}</td>
+      <td><span class="badge badge-${u.role==='admin'?'warning':'info'}">${u.role}</span></td>
+      <td><span class="badge badge-${active}">${activeText}</span></td>
+      <td>${created}</td>
+      <td><button class="btn btn-sm" onclick="editUser('${u.id}')">Edit</button></td>
+    </tr>`
+  });
+  html+='</tbody></table>';document.getElementById('usersTableContainer').innerHTML=html;
+  populateUserSelect(users)
+}
+
+function populateUserSelect(users){
+  const sel=document.getElementById('keyUser');sel.innerHTML='<option value="">Select user...</option>';
+  users.forEach(u=>{if(u.is_active)sel.innerHTML+=`<option value="${u.id}">${u.username} (${u.email})</option>`})
+}
+
+function openUserModal(){
+  document.getElementById('userId').value='';
+  document.getElementById('userModalTitle').textContent='Add User';
+  document.getElementById('userUsername').value='';
+  document.getElementById('userEmail').value='';
+  document.getElementById('userPassword').value='';
+  document.getElementById('userPassword').placeholder='Min 8 characters';
+  document.getElementById('userPassword').closest('.form-group').querySelector('.hint').textContent='';
+  document.getElementById('userRole').value='user';
+  document.getElementById('userModal').classList.remove('hidden')
+}
+function closeUserModal(){document.getElementById('userModal').classList.add('hidden')}
+
+function editUser(id){
+  fetch(API+'/users',{headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    if(!d.data)return;
+    const u=d.data.find(x=>x.id===id);
+    if(!u)return;
+    document.getElementById('userId').value=u.id;
+    document.getElementById('userModalTitle').textContent='Edit User';
+    document.getElementById('userUsername').value=u.username;
+    document.getElementById('userEmail').value=u.email;
+    document.getElementById('userPassword').value='';
+    document.getElementById('userPassword').placeholder='Kosongkan jika tidak ingin ganti';
+    document.getElementById('userPassword').closest('.form-group').querySelector('.hint').textContent='Kosongkan jika tidak ingin mengubah password';
+    document.getElementById('userRole').value=u.role;
+    document.getElementById('userModal').classList.remove('hidden')
+  })
+}
+
+function saveUser(){
+  const id=document.getElementById('userId').value;
+  const body={};
+  const username=document.getElementById('userUsername').value;
+  const email=document.getElementById('userEmail').value;
+  const password=document.getElementById('userPassword').value;
+  const role=document.getElementById('userRole').value;
+  if(!id&&(!username||!email||!password)){alert('Username, Email, dan Password wajib diisi untuk user baru');return}
+  if(username)body.username=username;
+  if(email)body.email=email;
+  if(password)body.password=password;
+  if(role)body.role=role;
+  const url=id?API+'/users/'+id:API+'/users';
+  const method=id?'PUT':'POST';
+  fetch(url,{method,headers:authHeaders(),body:JSON.stringify(body)}).then(r=>r.json()).then(d=>{
+    if(d.status==='success'){closeUserModal();loadUsers();loadKeys()}
+    else alert(d.message||'Error saving user')
+  }).catch(()=>alert('Connection error'))
+}
+
+/* ====== API Keys ====== */
+function loadKeys(){
+  document.getElementById('keysTableContainer').innerHTML='<div class="loading">Loading keys...</div>';
+  fetch(API+'/api-keys',{headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    if(d.status==='error'){document.getElementById('keysTableContainer').innerHTML=`<div class="loading">${d.message}</div>`;return}
+    renderKeys(d.data||[])
+  }).catch(()=>document.getElementById('keysTableContainer').innerHTML='<div class="loading">Error loading keys</div>')
+}
+
+function renderKeys(keys){
+  if(!keys.length){document.getElementById('keysTableContainer').innerHTML='<div class="loading">No API keys generated</div>';return}
+  fetch(API+'/users',{headers:authHeaders()}).then(r=>r.json()).then(userData=>{
+    const users=(userData.data||[]).reduce((m,u)=>{m[u.id]=u.username;return m},{});
+    let html=`<table><thead><tr><th>Name</th><th>Prefix</th><th>User</th><th>Status</th><th>Last Used</th><th>Expires</th><th>Created</th><th>Actions</th></tr></thead><tbody>`;
+    keys.forEach(k=>{
+      const active=k.is_active?'success':'error', activeText=k.is_active?'Active':'Revoked';
+      const last=k.last_used_at?new Date(k.last_used_at).toLocaleDateString():'-';
+      const exp=k.expires_at?new Date(k.expires_at).toLocaleDateString():'-';
+      const created=new Date(k.created_at).toLocaleDateString();
+      html+=`<tr>
+        <td><strong>${k.name}</strong></td>
+        <td style="font-family:monospace;color:#38bdf8">${k.key_prefix}...</td>
+        <td>${users[k.user_id]||k.user_id}</td>
+        <td><span class="badge badge-${active}">${activeText}</span></td>
+        <td>${last}</td>
+        <td>${exp}</td>
+        <td>${created}</td>
+        <td>${k.is_active?`<button class="btn btn-sm btn-danger" onclick="revokeKey('${k.id}')">Revoke</button>`:'<span style="color:#64748b">-</span>'}</td>
+      </tr>`
+    });
+    html+='</tbody></table>';document.getElementById('keysTableContainer').innerHTML=html
+  }).catch(()=>{
+    let html=`<table><thead><tr><th>Name</th><th>Prefix</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>`;
+    keys.forEach(k=>{
+      const active=k.is_active?'success':'error', activeText=k.is_active?'Active':'Revoked';
+      html+=`<tr><td><strong>${k.name}</strong></td><td style="font-family:monospace;color:#38bdf8">${k.key_prefix}...</td><td><span class="badge badge-${active}">${activeText}</span></td><td>${new Date(k.created_at).toLocaleDateString()}</td>
+        <td>${k.is_active?`<button class="btn btn-sm btn-danger" onclick="revokeKey('${k.id}')">Revoke</button>`:'<span style="color:#64748b">-</span>'}</td></tr>`
+    });
+    html+='</tbody></table>';document.getElementById('keysTableContainer').innerHTML=html
+  })
+}
+
+function openKeyModal(){
+  fetch(API+'/users',{headers:authHeaders()}).then(r=>r.json()).then(d=>{populateUserSelect(d.data||[]);document.getElementById('keyModal').classList.remove('hidden')}).catch(()=>{document.getElementById('keyModal').classList.remove('hidden')})
+}
+function closeKeyModal(){document.getElementById('keyModal').classList.add('hidden')}
+
+function saveKey(){
+  const userId=document.getElementById('keyUser').value, name=document.getElementById('keyName').value;
+  const expiry=document.getElementById('keyExpiry').value;
+  if(!userId||!name){alert('User dan Key Name wajib diisi');return}
+  const body={user_id:userId,name};
+  if(expiry)body.expiry_day=parseInt(expiry);
+  fetch(API+'/api-keys',{method:'POST',headers:authHeaders(),body:JSON.stringify(body)}).then(r=>r.json()).then(d=>{
+    if(d.status==='success'){
+      closeKeyModal();document.getElementById('keyName').value='';document.getElementById('keyExpiry').value='';
+      document.getElementById('keyResultValue').value=d.data.key;
+      document.getElementById('keyResultModal').classList.remove('hidden');
+      loadKeys()
+    } else alert(d.message||'Error generating key')
+  }).catch(()=>alert('Connection error'))
+}
+
+function revokeKey(id){
+  if(!confirm('Revoke this API key? Aksi ini tidak bisa dibatalkan.'))return;
+  fetch(API+'/api-keys/'+id,{method:'DELETE',headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    if(d.status==='success')loadKeys();else alert(d.message||'Error revoking key')
+  }).catch(()=>alert('Connection error'))
+}
+
+function copyKeyResult(){
+  const ta=document.getElementById('keyResultValue');ta.select();navigator.clipboard.writeText(ta.value).then(()=>{alert('Key copied!')}).catch(()=>{})
+}
+function closeKeyResultModal(){document.getElementById('keyResultModal').classList.add('hidden')}
+
+/* ====== API Sources ====== */
+function loadSources(){
+  document.getElementById('sourcesTableContainer').innerHTML='<div class="loading">Loading sources...</div>';
+  fetch(API+'/api-sources',{headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    if(d.status==='error'){document.getElementById('sourcesTableContainer').innerHTML=`<div class="loading">${d.message}</div>`;return}
+    renderSources(d.data||[])
+  }).catch(()=>document.getElementById('sourcesTableContainer').innerHTML='<div class="loading">Error loading sources</div>')
+}
+
+function renderSources(sources){
+  if(!sources.length){document.getElementById('sourcesTableContainer').innerHTML='<div class="loading">No API sources registered</div>';return}
+  let html=`<table><thead><tr><th>Name</th><th>URL</th><th>Method</th><th>Auth Type</th><th>Username</th><th>Auth</th><th>Timeout</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>`;
+  sources.forEach(s=>{
+    const authType=s.auth_type||'custom', method=s.method||'POST';
+    const authDesc=authType==='none'?'None':authType==='basic'?'Basic Auth':authType==='bearer'?'Bearer Token':authType==='api-key'?'API Key':'Custom';
+    const hasAuth=s.auth_headers||s.auth_type&&s.auth_type!=='none'?'Yes':'No', active=s.is_active?'success':'error', activeText=s.is_active?'Active':'Inactive';
+    const created=new Date(s.created_at).toLocaleDateString();
+    html+=`<tr>
+      <td><strong>${s.name}</strong></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.base_url}">${s.base_url}</td>
+      <td><span class="badge">${method}</span></td>
+      <td>${authDesc}</td>
+      <td>${s.username||'-'}</td>
+      <td>${hasAuth}</td>
+      <td>${s.timeout_ms}ms</td>
+      <td><span class="badge badge-${active}">${activeText}</span></td>
+      <td>${created}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editSource('${s.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteSource('${s.id}')">Del</button>
+      </td>
+    </tr>`
+  });
+  html+='</tbody></table>';document.getElementById('sourcesTableContainer').innerHTML=html
+}
+
+function openSourceModal(data){
+  document.getElementById('sourceModalTitle').textContent=data?'Edit API Source':'Add API Source';
+  document.getElementById('saveSourceBtn').textContent=data?'Update':'Save';
+  document.getElementById('sourceId').value=data?.id||'';
+  document.getElementById('srcUrl').value=data?.base_url||'';
+  document.getElementById('srcName').value=data?.name||'';
+  document.getElementById('srcUsername').value=data?.username||'';
+  document.getElementById('srcAuth').value=data?.auth_headers||'';
+  document.getElementById('srcAcceptedFields').value=data?.accepted_fields||'';
+  document.getElementById('srcParams').value=data?.extra_params||'';
+  document.getElementById('srcTimeout').value=data?.timeout_ms||30000;
+  document.getElementById('srcActive').value=data?.is_active!==false?'true':'false';
+  document.getElementById('srcMethod').value=data?.method||'POST';
+  const authType=data?.auth_type||(data?.auth_headers?'custom':'custom');
+  document.getElementById('srcAuthType').value=authType;
+  toggleAuthFields();
+
+  // Parse auth fields from auth_headers JSON for known types
+  if(data?.auth_headers){
+    try{
+      const h=JSON.parse(data.auth_headers);
+      const at=data.auth_type||'custom';
+      if(at==='basic'){
+        document.getElementById('authBasicUser').value=h.username||'';
+        document.getElementById('authBasicPass').value=h.password||'';
+      }else if(at==='bearer'){
+        document.getElementById('authBearerToken').value=h.token||'';
+      }else if(at==='api-key'){
+        document.getElementById('authApiKeyName').value=h.name||'';
+        document.getElementById('authApiKeyValue').value=h.key||'';
+        document.getElementById('authApiKeyIn').value=h.in||'header';
+      }
+    }catch(e){}
+  }
+  document.getElementById('sourceModal').classList.remove('hidden')
+}
+
+function closeSourceModal(){document.getElementById('sourceModal').classList.add('hidden')}
+
+function buildAuthHeadersFromFields(){
+  const at=document.getElementById('srcAuthType').value;
+  if(at==='none')return '';
+  if(at==='custom')return document.getElementById('srcAuth').value||'';
+  if(at==='basic'){
+    const user=document.getElementById('authBasicUser').value, pass=document.getElementById('authBasicPass').value;
+    if(!user&&!pass)return '';
+    return JSON.stringify({username:user,password:pass});
+  }
+  if(at==='bearer'){
+    const token=document.getElementById('authBearerToken').value;
+    if(!token)return '';
+    return JSON.stringify({token:token});
+  }
+  if(at==='api-key'){
+    const name=document.getElementById('authApiKeyName').value, value=document.getElementById('authApiKeyValue').value;
+    const loc=document.getElementById('authApiKeyIn').value;
+    if(!name||!value)return '';
+    return JSON.stringify({name:name,key:value,in:loc});
+  }
+  return document.getElementById('srcAuth').value||'';
+}
+
+function toggleAuthFields(){
+  const at=document.getElementById('srcAuthType').value;
+  const map={custom:'Custom',basic:'Basic',bearer:'Bearer','api-key':'ApiKey'};
+  const target='authFields'+(map[at]||'Custom');
+  ['authFieldsCustom','authFieldsBasic','authFieldsBearer','authFieldsApiKey'].forEach(id=>{
+    document.getElementById(id).classList.toggle('hidden',id!==target);
+  });
+}
+
+function saveSource(){
+  const id=document.getElementById('sourceId').value, isUpdate=!!id;
+  const body={};
+  if(document.getElementById('srcUrl').value)body.base_url=document.getElementById('srcUrl').value;
+  if(document.getElementById('srcName').value)body.name=document.getElementById('srcName').value;
+  if(document.getElementById('srcUsername').value)body.username=document.getElementById('srcUsername').value;
+  body.auth_type=document.getElementById('srcAuthType').value;
+  body.method=document.getElementById('srcMethod').value;
+  const ah=buildAuthHeadersFromFields();
+  if(ah)body.auth_headers=ah;
+  if(document.getElementById('srcAcceptedFields').value)body.accepted_fields=document.getElementById('srcAcceptedFields').value;
+  if(document.getElementById('srcParams').value)body.extra_params=document.getElementById('srcParams').value;
+  body.timeout_ms=parseInt(document.getElementById('srcTimeout').value)||30000;
+  if(isUpdate)body.is_active=document.getElementById('srcActive').value==='true';
+
+  const url=isUpdate?API+'/api-sources/'+id:API+'/api-sources';
+  const method=isUpdate?'PUT':'POST';
+
+  fetch(url,{method,headers:authHeaders(),body:JSON.stringify(body)}).then(r=>r.json()).then(d=>{
+    if(d.status==='success'){closeSourceModal();loadSources()}
+    else alert(d.message||'Error saving source')
+  }).catch(()=>alert('Connection error'))
+}
+
+function editSource(id){
+  fetch(API+'/api-sources',{headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    if(!d.data)return;const s=d.data.find(x=>x.id===id);if(s)openSourceModal(s)
+  })
+}
+
+function deleteSource(id){
+  if(!confirm('Delete this API source?'))return;
+  fetch(API+'/api-sources/'+id,{method:'DELETE',headers:authHeaders()}).then(r=>r.json()).then(d=>{
+    if(d.status==='success')loadSources();else alert(d.message||'Error deleting')
+  }).catch(()=>alert('Connection error'))
+}
+
+function autoGenerateName(){
+  const url=document.getElementById('srcUrl').value,nameInput=document.getElementById('srcName');
+  if(nameInput.dataset.userEdited)return;
+  if(!url){nameInput.value='';return}
+  try{
+    const u=new URL(url), host=u.hostname.replace(/^www\./,'').split('.');
+    const name=host.length>=2?host[host.length-2]:host[0];
+    nameInput.value=name.toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')||'api-source'
+  }catch(e){nameInput.value='api-source'}
+}
+document.getElementById('srcName').addEventListener('input',function(){this.dataset.userEdited='true'})
+</script>
+</body>
+</html>

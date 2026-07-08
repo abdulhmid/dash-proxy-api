@@ -1,0 +1,1 @@
+ALTER TABLE api_sources ADD COLUMN IF NOT EXISTS extra_params TEXT DEFAULT '';
