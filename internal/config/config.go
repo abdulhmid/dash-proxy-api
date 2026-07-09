@@ -94,7 +94,7 @@ func Load() *Config {
 		},
 		Database: DatabaseConfig{
 			Postgres: PostgresConfig{
-				Host:     env("DATABASE_POSTGRES_HOST", "localhost"),
+				Host:     env("DATABASE_POSTGRES_HOST", "localhost-noset"),
 				Port:     env("DATABASE_POSTGRES_PORT", "5432"),
 				User:     env("DATABASE_POSTGRES_USER", "postgres"),
 				Password: env("DATABASE_POSTGRES_PASSWORD", "postgres"),
