@@ -2,16 +2,16 @@
   "buildCommand": "go build -o api/index api/index.go",
   "devCommand": "go run cmd/api/main.go",
   "installCommand": "go mod download",
-  "functions": {
-    "api/index.go": {
-      "maxDuration": 60,
-      "runtime": "go"
-    }
-  },
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/api/index"
+      "src": "api/index.go",
+      "use": "@vercel/go@1.0.0"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/api/index"
     }
   ]
 }
