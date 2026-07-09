@@ -1,4 +1,4 @@
-package api
+package main
 
 import (
 	"context"
@@ -21,7 +21,6 @@ import (
 )
 
 var router *chi.Mux
-var server *http.Server
 var cfg *config.Config
 
 func init() {
@@ -139,4 +138,22 @@ func init() {
 // Handler is the Vercel serverless function entry point
 func Handler(w http.ResponseWriter, r *http.Request) {
 	router.ServeHTTP(w, r)
+}
+
+// main is for local development only
+func main() {
+	server := &http.Server{
+		Handler:      router,
+		Addr:         ":8080",
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+	logger.Info().Int("port", 8080).Msg("Server starting")
+
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		logger.Fatal().Err(err).Msg("Server failed")
+	}
 }

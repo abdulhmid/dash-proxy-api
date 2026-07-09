@@ -1,17 +1,15 @@
 {
-  "buildCommand": "go build -o api/index api/index.go",
-  "devCommand": "go run cmd/api/main.go",
-  "installCommand": "go mod download",
+  "version": 2,
   "builds": [
     {
-      "src": "api/index.go",
+      "src": "main.go",
       "use": "@vercel/go"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/index"
+      "dest": "/"
     }
   ]
 }
