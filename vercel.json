@@ -5,7 +5,7 @@
   "functions": {
     "api/index.go": {
       "maxDuration": 60,
-      "runtime": "go1.21"
+      "runtime": "go@1.21"
     }
   },
   "rewrites": [
