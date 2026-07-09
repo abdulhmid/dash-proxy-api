@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	apperrors "api-source-proxy/pkg/errors"
 
-	"api-source-proxy/internal/model"
+	"api-source-proxy/app/model"
 )
 
 type UserRepo struct {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"api-source-proxy/internal/service"
+	"api-source-proxy/app/service"
 	"api-source-proxy/pkg/response"
 )
 

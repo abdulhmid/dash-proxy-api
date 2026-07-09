@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 
-	"api-source-proxy/internal/model"
+	"api-source-proxy/app/model"
 	apperrors "api-source-proxy/pkg/errors"
 )
 

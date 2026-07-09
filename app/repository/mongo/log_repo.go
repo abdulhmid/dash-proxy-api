@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
-	"api-source-proxy/internal/model"
+	"api-source-proxy/app/model"
 )
 
 type LogRepo struct {

@@ -14,11 +14,11 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
-	"api-source-proxy/internal/config"
-	"api-source-proxy/internal/handler"
-	"api-source-proxy/internal/repository/postgres"
-	mongorepo "api-source-proxy/internal/repository/mongo"
-	"api-source-proxy/internal/service"
+	"api-source-proxy/app/config"
+	"api-source-proxy/app/handler"
+	"api-source-proxy/app/repository/postgres"
+	mongorepo "api-source-proxy/app/repository/mongo"
+	"api-source-proxy/app/service"
 	"api-source-proxy/pkg/database"
 )
 

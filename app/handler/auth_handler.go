@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"api-source-proxy/internal/dto"
-	"api-source-proxy/internal/service"
+	"api-source-proxy/app/dto"
+	"api-source-proxy/app/service"
 	"api-source-proxy/pkg/response"
 )
 

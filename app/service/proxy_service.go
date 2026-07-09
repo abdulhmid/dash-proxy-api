@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"api-source-proxy/internal/model"
-	"api-source-proxy/internal/repository"
+	"api-source-proxy/app/model"
+	"api-source-proxy/app/repository"
 	apperrors "api-source-proxy/pkg/errors"
 )
 

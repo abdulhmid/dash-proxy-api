@@ -1,4 +1,4 @@
-package handler
+package main
 
 import (
 	"context"
@@ -12,11 +12,11 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
-	"api-source-proxy/internal/config"
-	"api-source-proxy/internal/handler"
-	"api-source-proxy/internal/repository/postgres"
-	mongorepo "api-source-proxy/internal/repository/mongo"
-	"api-source-proxy/internal/service"
+	"api-source-proxy/app/config"
+	"api-source-proxy/app/handler"
+	"api-source-proxy/app/repository/postgres"
+	mongorepo "api-source-proxy/app/repository/mongo"
+	"api-source-proxy/app/service"
 	"api-source-proxy/pkg/database"
 )
 
@@ -138,5 +138,20 @@ func init() {
 // Handler is the Vercel serverless function entry point
 func Handler(w http.ResponseWriter, r *http.Request) {
 	router.ServeHTTP(w, r)
+}
+
+func main() {
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+	srv := &http.Server{
+		Addr:         ":8080",
+		Handler:      router,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+	logger.Info().Int("port", 8080).Msg("Server starting")
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		logger.Fatal().Err(err).Msg("Server failed")
+	}
 }
 

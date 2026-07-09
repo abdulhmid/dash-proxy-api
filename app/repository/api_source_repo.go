@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"api-source-proxy/internal/model"
+	"api-source-proxy/app/model"
 )
 
 type ApiSourceRepository interface {

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"api-source-proxy/internal/dto"
-	"api-source-proxy/internal/model"
-	"api-source-proxy/internal/repository"
+	"api-source-proxy/app/dto"
+	"api-source-proxy/app/model"
+	"api-source-proxy/app/repository"
 	"api-source-proxy/pkg/auth"
 	apperrors "api-source-proxy/pkg/errors"
 )

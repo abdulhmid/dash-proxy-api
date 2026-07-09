@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"api-source-proxy/internal/model"
-	"api-source-proxy/internal/service"
+	"api-source-proxy/app/model"
+	"api-source-proxy/app/service"
 	"api-source-proxy/pkg/auth"
 	"api-source-proxy/pkg/response"
 )
