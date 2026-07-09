@@ -1,13 +1,10 @@
 {
-  "version": 2,
-  "buildCommand": "go build -o bootstrap .",
-  "outputDirectory": ".",
-  "installCommand": "go mod download",
-  "functions": {
-    "bootstrap": {
-      "runtime": "go1.21"
+  "builds": [
+    {
+      "src": "main.go",
+      "use": "@vercel/go"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/(.*)",
