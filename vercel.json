@@ -1,0 +1,19 @@
+{
+  "buildCommand": "go build -o api/index api/index.go",
+  "devCommand": "go run cmd/api/main.go",
+  "installCommand": "go mod download",
+  "framework": "golang",
+  "regions": ["iad1"],
+  "functions": {
+    "api/index.go": {
+      "maxDuration": 60,
+      "runtime": "go1.21"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index"
+    }
+  ]
+}
