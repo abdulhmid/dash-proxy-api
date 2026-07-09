@@ -5,7 +5,7 @@
   "builds": [
     {
       "src": "api/index.go",
-      "use": "@vercel/go@1.0.0"
+      "use": "@vercel/go"
     }
   ],
   "routes": [
